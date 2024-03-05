@@ -332,7 +332,11 @@ class AnalogBatteryLevel : public HasBatteryLevel
     // need to be higher than that, in this case is 2500mV (3000-500)
     const uint16_t OCV[NUM_OCV_POINTS] = {OCV_ARRAY};
     const float chargingVolt = (OCV[0] + 10) * NUM_CELLS;
-    const float noBatVolt = (OCV[NUM_OCV_POINTS - 1] - 500) * NUM_CELLS;
+    // const float noBatVolt = (OCV[NUM_OCV_POINTS - 1] - 500) * NUM_CELLS;
+    //  on the heltec v2.1 no battery connected is still geting readings of about 3.9v with default calibration
+    //  but when real battery level gets bellow 3.2 then adc readings get non linear to around 1000mv at 3.3v
+    //  so I just want any reading I can get so zero noBatVolt at least I see something.
+    const float noBatVolt = 0;
     // Start value from minimum voltage for the filter to not start from 0
     // that could trigger some events.
     float last_read_value = (OCV[NUM_OCV_POINTS - 1] * NUM_CELLS);
@@ -588,7 +592,10 @@ void Power::readPowerStatus()
         // a row. NOTE: min LiIon/LiPo voltage is 2.0 to 2.5V, current OCV min is set to 3100 that is large enough.
         //
         if (powerStatus2.getHasBattery() && !powerStatus2.getHasUSB()) {
-            if (batteryLevel->getBattVoltage() < OCV[NUM_OCV_POINTS - 1]) {
+            // if (batteryLevel->getBattVoltage() < OCV[NUM_OCV_POINTS - 1]) {
+            //  on heltec v2.1 brown outs begin at 3.7v battery input
+            //  so we need to start deep sleep at about 3.8v = OCV[-7]
+            if (batteryLevel->getBattVoltage() < OCV[NUM_OCV_POINTS - 7]) {
                 low_voltage_counter++;
                 LOG_DEBUG("Low voltage counter: %d/10\n", low_voltage_counter);
                 if (low_voltage_counter > 10) {

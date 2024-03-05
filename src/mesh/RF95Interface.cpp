@@ -13,6 +13,9 @@
 // In theory up to 27 dBm is possible, but the modules installed in most radios can cope with a max of 20.  So BIG WARNING
 // if you set power to something higher than 17 or 20 you might fry your board.
 
+#define MIN_POWER 2
+// any value bellow 2 will lock up unit requireing reflash and factory reset to fix
+
 #define POWER_DEFAULT 17 // How much power to use if the user hasn't set a power level
 
 RF95Interface::RF95Interface(LockingArduinoHal *hal, RADIOLIB_PIN_TYPE cs, RADIOLIB_PIN_TYPE irq, RADIOLIB_PIN_TYPE rst,
@@ -51,6 +54,9 @@ bool RF95Interface::init()
 
     if (power > MAX_POWER) // This chip has lower power limits than some
         power = MAX_POWER;
+
+    if (power < MIN_POWER) // can't set power bellow 2 without locking up unit
+        power = MIN_POWER;
 
     limitPower();
 
