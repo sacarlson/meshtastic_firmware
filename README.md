@@ -8,7 +8,7 @@
 
 ## Overview
 
-This repository contains the device firmware for the Meshtastic project.
+This repository contains the device firmware for the Meshtastic project.  This branch is only for a few problems I personaly found for the now discontinued support heltec lora32 v2.1 that had some power supply issues and a minor bug fix to prevent lockup when setting RF power levels bellow 2db.  If this was to be pushed to meshtastic it would have to be tested and most likely modified to continue to work with other newer devices now supported by meshtastic.  With this version I am able to run the old heltec v2.1 on a small 5w solar panel and a 1000mah lipo battery without problems.  If I want long duration 10+ day operation with no solar power on just 1000ma battery I can set power>adc multiplier overide to 2.7v and set super deep sleep duration to 20000 sec.  This will make the voltage telemetry numbers seen incorect but still works if needed.
 
 - **[Building Instructions](https://meshtastic.org/docs/development/firmware/build)**
 - **[Flashing Instructions](https://meshtastic.org/docs/getting-started/flashing-firmware/)**
